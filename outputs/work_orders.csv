@@ -1,0 +1,14 @@
+string,detector,severity,first_day,days_affected,evidence,lost_kwh,annual_lost_kwh,annual_lost_eur,inverter
+string_1412,peer_ratio + windowed_trend + zero_output,1.0,60,120,"90 consecutive days below 2% of peer median; mean ratio 0.261, robust z -46.8; -119.9% lost over a 30-day window from day 75",3122.3,9496.9,759.75,9
+string_1444,peer_ratio + windowed_trend + zero_output,1.0,60,120,"48 consecutive days below 2% of peer median; -111.2% lost over a 30-day window from day 115; mean ratio 0.600, robust z -25.3",1847.6,5619.8,449.58,9
+string_0355,peer_ratio,0.42549657821655273,60,120,"mean ratio 0.865, robust z -8.5",523.3,1591.6,127.33,3
+string_0008,peer_ratio + trend + windowed_trend,0.36848777532577515,60,120,"mean ratio 0.883, robust z -7.4; -20.5% lost over a 30-day window from day 100; -0.164% of peer median lost per day (-19.5% over the window)",504.5,1534.4,122.75,1
+string_1381,peer_ratio + windowed_trend,0.27583273557516247,60,120,"-27.6% lost over a 30-day window from day 135; mean ratio 0.913, robust z -5.5",386.0,1174.0,93.92,8
+string_0910,peer_ratio + windowed_trend,0.20409564673900604,60,120,"mean ratio 0.935, robust z -4.1; -14.2% lost over a 30-day window from day 85",302.8,921.0,73.68,6
+string_0450,peer_ratio + windowed_trend,0.22785787284374237,60,120,"mean ratio 0.928, robust z -4.6; -10.6% lost over a 30-day window from day 70",295.3,898.2,71.86,3
+string_0087,peer_ratio,0.22747905552387238,60,120,"mean ratio 0.928, robust z -4.5",270.4,822.6,65.8,1
+string_1076,peer_ratio,0.20610587298870087,60,120,"mean ratio 0.935, robust z -4.1",257.2,782.3,62.59,7
+string_0474,peer_ratio + windowed_trend,0.20823387801647186,60,120,"mean ratio 0.934, robust z -4.2; -18.4% lost over a 30-day window from day 70",254.5,774.1,61.93,3
+string_1222,windowed_trend,0.10454561975267199,80,30,-10.5% lost over a 30-day window from day 80,240.5,731.6,58.53,7
+string_1484,windowed_trend,0.14523938298225403,75,30,-14.5% lost over a 30-day window from day 75,229.6,698.3,55.86,9
+string_1314,windowed_trend,0.1293205131183971,95,30,-12.9% lost over a 30-day window from day 95,142.9,434.8,34.78,8

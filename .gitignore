@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+# 63 MB of simulated SCADA, regenerated deterministically by `pvfault demo`
+outputs/scada.csv

@@ -1,0 +1,15 @@
+string_id,kind,start_day,magnitude,detail
+1412,disconnect,30,1.0,combiner fuse
+1444,disconnect,72,1.0,connector failure
+1484,soiling,12,0.22,"dust, no wash cycle"
+1222,soiling,20,0.16,"dust, partial"
+474,soiling,8,0.28,near access track
+355,shading,0,0.45,new switchgear cabinet
+1076,shading,0,0.3,vegetation
+8,degradation,55,0.18,PID onset
+910,degradation,40,0.12,cell cracking
+1381,degradation,90,0.25,bypass diode
+87,underperf,0,0.07,module mismatch
+982,underperf,0,0.05,undersized cable
+450,underperf,25,0.09,loose termination
+1314,soiling,35,0.19,bird fouling
