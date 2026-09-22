@@ -14,7 +14,7 @@ from pvfault import (  # noqa: E402
     NIR, DetectorConfig, Fault, PlantSpec, default_fault_set,
     estimate_losses, generate, run_all, score,
 )
-from pvfault.detect import daily_ratio, robust_z, theil_sen_slope  # noqa: E402
+from pvfault.detect import daily_ratio, replay, robust_z, theil_sen_slope  # noqa: E402
 from pvfault.irradiance import cos_zenith, haurwitz_ghi  # noqa: E402
 
 
@@ -140,6 +140,15 @@ def test_end_to_end_precision_and_recall():
     assert result["recall"] >= 0.85, f"recall regressed to {result['recall']}"
     assert result["recall_by_fault_type"]["disconnect"] == "2/2"
     assert result["recall_by_fault_type"]["soiling"] == "4/4"
+
+
+def test_replay_catches_disconnect_after_it_happens():
+    spec = NIR
+    fault = Fault(5, "disconnect", 20, 1.0)
+    scada, _ = generate(spec, days=40, interval_minutes=60, faults=[fault], seed=3)
+    first = replay(daily_ratio(scada))
+    day = first["string_0005"]
+    assert 21 <= day <= 21 + DetectorConfig().zero_output_days, day
 
 
 def test_losses_are_ranked_and_positive():

@@ -3,6 +3,11 @@
 Finding the underperforming strings in a 10 MW solar plant from SCADA data, and
 ranking them by what they cost per year.
 
+![Detectors replayed day by day](outputs/detection-replay.gif)
+
+*The detectors replayed over the 120-day record, seeing only the data up to each
+day. Amber strings carry an injected fault not yet caught; red ones have been flagged.*
+
 ![Fleet overview](outputs/fleet-overview.png)
 
 ## The problem
@@ -86,7 +91,7 @@ PYTHONPATH=src python -m pvfault.cli simulate --days 120 --out outputs
 PYTHONPATH=src python -m pvfault.cli detect --scada outputs/scada.csv \
     --truth outputs/truth.csv --tariff 0.08
 
-# regenerate the figures
+# regenerate the figures and the replay GIF (~45 s)
 PYTHONPATH=src python examples/make_figures.py
 
 # tests
@@ -124,7 +129,7 @@ src/pvfault/
   report.py       loss estimation, ranking, scoring
   plots.py        figures, dark and light
   cli.py          simulate / detect / demo
-tests/            17 tests, no network, deterministic
+tests/            18 tests, no network, deterministic
 examples/         figure regeneration
 ```
 

@@ -214,6 +214,28 @@ def detect_windowed_trend(
     return pd.DataFrame(rows)
 
 
+def replay(
+    ratio: pd.DataFrame, cfg: DetectorConfig | None = None, step: int = 1
+) -> dict[str, int]:
+    """Day of record on which each string is first flagged, seeing no later data.
+
+    The daily ratio is already causal (each day is divided by that day's median),
+    so rerunning the detectors on growing prefixes of it is an honest replay of
+    what an operator would have seen, including any false alarm raised early.
+    """
+    cfg = cfg or DetectorConfig()
+    total = ratio.shape[0]
+    first: dict[str, int] = {}
+    for n in sorted({*range(step, total + 1, step), total}):
+        prefix = ratio.iloc[:n]
+        for detector in (detect_zero_output, detect_peer_ratio,
+                         detect_trend, detect_windowed_trend):
+            found = detector(prefix, cfg)
+            for col in ([] if found.empty else found["string"]):
+                first.setdefault(col, n)
+    return first
+
+
 def run_all(
     scada: pd.DataFrame, cfg: DetectorConfig | None = None
 ) -> tuple[pd.DataFrame, pd.DataFrame]:

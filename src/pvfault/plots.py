@@ -105,6 +105,81 @@ def fleet_overview(
     return out
 
 
+def detection_replay(
+    ratio: pd.DataFrame, truth: pd.DataFrame, first_flag: dict[str, int],
+    out: Path, step: int = 2, fps: int = 10, hold_s: float = 2.5,
+) -> Path:
+    """Animated GIF: the record plays out day by day and strings turn red when caught.
+
+    Dark only - a GIF cannot follow the viewer's theme, and the README already
+    leads with the dark figures.
+    """
+    from matplotlib.animation import FuncAnimation, PillowWriter
+
+    c = DARK
+    days = np.arange(1, ratio.shape[0] + 1)
+    kind_of = {f"string_{int(s):04d}": k for s, k in zip(truth["string_id"], truth["kind"])}
+    tracked = list(dict.fromkeys([*kind_of, *first_flag]))  # faults + any false alarm
+    lo = ratio.quantile(0.02, axis=1).to_numpy()
+    hi = ratio.quantile(0.98, axis=1).to_numpy()
+    med = ratio.median(axis=1).to_numpy()
+
+    fig = plt.figure(figsize=(8.0, 4.2), facecolor=c["bg"])
+    ax = fig.add_axes((0.07, 0.12, 0.58, 0.72))
+    side = fig.add_axes((0.68, 0.05, 0.31, 0.79))
+    side.axis("off")
+    _style(ax, c, None, "day of record", "ratio to peer median")
+    ax.set_xlim(1, days[-1])
+    ax.set_ylim(0, 1.25)
+
+    band = [ax.fill_between(days[:1], lo[:1], hi[:1], color=c["acc"], alpha=0.18)]
+    (med_line,) = ax.plot([], [], color=c["acc"], lw=1.3, label="fleet median")
+    lines = {col: ax.plot([], [], lw=1.0, color=c["amb"], alpha=0.8)[0] for col in tracked}
+    ax.plot([], [], lw=1.0, color=c["amb"], label="injected fault, not yet caught")
+    ax.plot([], [], lw=1.4, color=c["red"], label="flagged by detector")
+    leg = ax.legend(fontsize=7, facecolor=c["panel"], edgecolor=c["grid"], loc="center left")
+    for t in leg.get_texts():
+        t.set_color(c["mut"])
+
+    fig.text(0.007, 0.95, "Nir PV plant - detectors replayed on 1,584 strings",
+             color=c["ink"], fontsize=11, fontweight="bold")
+    clock = fig.text(0.07, 0.87, "", color=c["mut"], fontsize=9)
+    tally = side.text(0, 1, "", color=c["ink"], fontsize=10, fontweight="bold",
+                      va="top", family="monospace")
+    log = side.text(0, 0.80, "", color=c["mut"], fontsize=7.5, va="top",
+                    family="monospace", linespacing=1.5)
+
+    ends = sorted({*range(step, days[-1] + 1, step), int(days[-1])})
+    frames = ends + [ends[-1]] * int(hold_s * fps)
+
+    def draw(n):
+        band[0].remove()
+        band[0] = ax.fill_between(days[:n], lo[:n], hi[:n], color=c["acc"], alpha=0.18)
+        med_line.set_data(days[:n], med[:n])
+        caught = {col: d for col, d in first_flag.items() if d <= n}
+        for col, line in lines.items():
+            line.set_data(days[:n], ratio[col].to_numpy()[:n])
+            if col in caught:
+                line.set(color=c["red"], alpha=1.0, lw=1.4)
+        hits = sum(col in kind_of for col in caught)
+        clock.set_text(f"day {n} of {days[-1]}")
+        tally.set_text(f"found  {hits:>2} / {len(kind_of)}\n"
+                       f"false  {len(caught) - hits:>2}")
+        rows = sorted(caught.items(), key=lambda kv: kv[1])
+        log.set_text("\n".join(
+            f"day {d:>3}  S{col[-4:]}  {kind_of.get(col, 'FALSE ALARM')}"
+            for col, d in rows
+        ))
+        return []
+
+    anim = FuncAnimation(fig, draw, frames=frames, blit=False)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    anim.save(out, writer=PillowWriter(fps=fps), dpi=100,
+              savefig_kwargs={"facecolor": c["bg"]})
+    plt.close(fig)
+    return out
+
+
 def fault_signatures(
     ratio: pd.DataFrame, truth: pd.DataFrame, out: Path, theme: str = "dark"
 ) -> Path:
