@@ -24,7 +24,10 @@ def main() -> None:
         suffix = "" if theme == "dark" else "-light"
         fleet_overview(ratio, report, truth, OUT / f"fleet-overview{suffix}.png", theme)
         fault_signatures(ratio, truth, OUT / f"fault-signatures{suffix}.png", theme)
-    detection_replay(ratio, truth, replay(ratio, step=2), OUT / "detection-replay.gif")
+    first_flag = replay(ratio, step=2)
+    for theme in ("dark", "light"):
+        suffix = "" if theme == "dark" else "-light"
+        detection_replay(ratio, truth, first_flag, OUT / f"detection-replay{suffix}.gif", theme=theme)
     print("figures written to", OUT)
 
 

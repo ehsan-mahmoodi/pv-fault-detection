@@ -107,16 +107,15 @@ def fleet_overview(
 
 def detection_replay(
     ratio: pd.DataFrame, truth: pd.DataFrame, first_flag: dict[str, int],
-    out: Path, step: int = 2, fps: int = 10, hold_s: float = 2.5,
+    out: Path, step: int = 2, fps: int = 10, hold_s: float = 2.5, theme: str = "dark",
 ) -> Path:
     """Animated GIF: the record plays out day by day and strings turn red when caught.
 
-    Dark only - a GIF cannot follow the viewer's theme, and the README already
-    leads with the dark figures.
+    A GIF cannot follow the viewer's theme, so render one per theme.
     """
     from matplotlib.animation import FuncAnimation, PillowWriter
 
-    c = DARK
+    c = DARK if theme == "dark" else LIGHT
     days = np.arange(1, ratio.shape[0] + 1)
     kind_of = {f"string_{int(s):04d}": k for s, k in zip(truth["string_id"], truth["kind"])}
     tracked = list(dict.fromkeys([*kind_of, *first_flag]))  # faults + any false alarm
